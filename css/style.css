@@ -11,6 +11,12 @@ body {
 
 #app {
   width: 3.75rem;
+  height: 100vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
 }
 
 .main {
@@ -34,7 +40,7 @@ body {
   line-height: 0.5rem;
   font-size: 0.25rem;
   font-weight: 900;
-  color: #eee;
+  color: rgb(255, 220, 226);
 }
 
 .header>input {
@@ -54,6 +60,11 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 0.15rem;
+  color: rgb(253, 171, 185);
+}
+
+.doing {
+  border-bottom: 2px solid #eee;
 }
 
 .todo .list {
