@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
+  <script src="js/todo.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="main">
+      <div class="header">
+        <div class="logo">Todo</div>
+        <input type="text" v-model="inputValue" id="input" @keydown.enter="enterEvent" placeholder="请输入待办事项">
+      </div>
+      <div class="doing todo">
+        <h3><span class="title">正在进行</span><span class="num">{{nowLists}}</span></h3>
+        <div class="list">
+          <transition-group name="slide" mode="out-in" enter-active-class="animated bounceInLeft"
+            leave-active-class="animated bounceOutRight">
+            <div class="todoItem" v-for="item,index in doingList" :key="'doing' +index">
+              <input type="checkbox" @click.prevent="checkDone(item.id)" :data-id="item.id">
+              <div class="content">{{item.content}}</div>
+              <div class="del" @click="deleteItem(item.id)">删除</div>
+            </div>
+          </transition-group>
+        </div>
+      </div>
+      <div class="done todo">
+        <h3><span class="title">已经完成</span><span class="num">{{finishLists}}</span></h3>
+        <div class="list">
+          <transition-group name="slide" enter-active-class="animated bounceInLeft"
+            leave-active-class="animated bounceOutRight">
+            <div class="todoItem" v-for="item,index in doneList" :key="'done' + index">
+              <input type="checkbox" @click.prevent="checkDone(item.id)" :data-id="item.id" checked>
+              <div class="content">{{item.content}}</div>
+              <div class="del" @click="deleteItem(item.id)">删除</div>
+            </div>
+          </transition-group>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let app = new Vue({
+      el: "#app",
+      data: {
+        inputValue: "",
+        nowLists: 0,
+        todoList: [],
+        finishLists: 0
+      },
+      computed: {
+        doingList() {
+          let arr = this.todoList.filter(function (item, index) {
+            return !item.isDone
+          })
+          this.nowLists = arr.length
+          return arr
+        },
+        doneList() {
+          let arr = this.todoList.filter(function (item, index) {
+            return item.isDone
+          })
+          this.finishLists = arr.length
+          return arr
+        }
+      },
+      methods: {
+        enterEvent(event) {
+          this.todoList.push({
+            content: this.inputValue,
+            isDone: false,
+            id: this.todoList.length
+          })
+          this.saveData()
+          this.inputValue = ""
+        },
+        saveData() {
+          localStorage.todoList = JSON.stringify(this.todoList)
+        },
+        checkDone(id) {
+          this.todoList[id].isDone = !this.todoList[id].isDone
+          this.saveData()
+        },
+        deleteItem(id) {
+          this.todoList.splice(id, 1)
+          this.todoList.forEach(function (item, i) {
+            item.id = i;
+          })
+          this.saveData()
+        }
+      },
+      mounted() {
+        this.todoList = localStorage.todoList ? JSON.parse(localStorage.todoList) : []
+      },
+    })
+  </script>
+</body>
+
+</html>
